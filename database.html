@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Raptors 1711</title>
+</head>
+
+<body>
+    <div id="loadingView">
+        <center>
+            <p class="loadingText">Loading</p>
+            <img src="loading.gif" style="width:15%">
+        </center>
+    </div>
+</body>
+<script type="text/javascript">
+console.log(getURIParameter("id"));
+
+function getURIParameter(param, asArray) {
+    return document.location.search.substring(1).split('&').reduce(function(p, c) {
+        var parts = c.split('=', 2).map(function(param) {
+            return decodeURIComponent(param);
+        });
+        if (parts.length == 0 || parts[0] != param) return (p instanceof Array) && !asArray ? null : p;
+        return asArray ? p.concat(parts.concat(true)[1]) : parts.concat(true)[1];
+    }, []);
+}
+</script>
+
+</html>
