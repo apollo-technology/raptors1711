@@ -17,6 +17,8 @@
 <script type="text/javascript">
 console.log(getURIParameter("id"));
 
+document.title = "Team " + getURIParameter("id") + " | Hosted by 1711";
+
 function getURIParameter(param, asArray) {
     return document.location.search.substring(1).split('&').reduce(function(p, c) {
         var parts = c.split('=', 2).map(function(param) {
