@@ -2,27 +2,110 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <script type="text/javascript" src="parseJS.js"></script>
-    <script type="text/javascript" src="jQuery.js"></script>
+    <meta charset="utf-8">
     <title>Raptors 1711</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="styles.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://parse.com/downloads/javascript/parse-1.6.14.js"></script>
 </head>
+<style type="text/css">
+body {
+    background: #7bbf4a;
+    text-align: left;
+    padding: 0 25px;
+    font-family: Tahoma, Geneva, sans-serif;
+}
 
-<body class="tableBody">
-    <div class="loadingView">
+h1 {
+    margin-top: 0;
+    font-size: 48px;
+    text-align: center;
+    color: white;
+}
+
+p {
+    text-align: center;
+    word-wrap: break-word;
+    width: 80%;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: italic;
+}
+
+#main ul {
+    padding-left: 20px;
+}
+
+#main .error {
+    border: 1px solid red;
+    background: #FDEFF0;
+    padding: 20px;
+}
+
+#main .success {
+    margin-top: 25px;
+}
+
+#main .success code {
+    font-size: 12px;
+    color: green;
+    line-height: 13px;
+}
+
+table {
+    width: 100%;
+}
+
+table,
+th,
+td {
+    border: 0px solid black;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+}
+
+table#t01 tr:nth-child(even) {
+    background-color: #fff;
+}
+
+table#t01 tr:nth-child(odd) {
+    background-color: #eee;
+}
+
+table#t01 th {
+    background-color: #d6d6d6;
+    color: black;
+}
+</style>
+
+<body>
+    <div class="start">
+        <br>
+        <h1>Raptors 1711</h1>
+        <p>Hello, welcome to the Raptors online scouting database. To continue, enter your team number to view all stats you entered in the mobile application.</p>
         <center>
-            <p class="loadingText">Loading</p>
-            <img src="loading.gif" style="width:15%">
+            <br>
+            <input type="number" pattern="[0-9]*" inputmode="numeric" name="firstname" placeholder="Team Number" id="teamNumberField" align="center">
+            <br>
+            <br>
+            <button type="button" id="loadButton" onclick="startSearch()">Load Database</button>
         </center>
     </div>
-    <div class="table" style="display:none; width:100%">
-        <ul class="menu" id="menuList">
-                <li><a class="active" href="index.html">Back</a></li>
-                <!-- <li><a class="inactive" href="doewifj" id="refreshButton">Refresh Data</a></li> -->
-            </ul>
-        <table id="t01" style="margin-top:44px">
+    <div class="table" style="display:none">
+        <table id="t01">
+            <br>
             <center>
+                <h1>Scouting Information</h1>
+                <!-- <button type="button" id="loadButton" onclick="startSearch()">Reload</button> -->
+                <!-- <br> -->
+                <br>
                 <tbody>
                     <tr>
                         <th>Name</th>
@@ -48,34 +131,13 @@
     </div>
 </body>
 <script type="text/javascript">
-Parse.initialize("eEggg5yDSk41YwuUeFNjrUlSrAMhgqxZQplfbiWg", "AzpveusohpgmBuCRGqXNfG9sKSxjwv7SwazOOBsR");
-Parse.serverURL = 'https://parseapi.back4app.com'
 
-document.title = "Team " + getURIParameter("id") + " | Hosted by 1711";
-
-function getURIParameter(param, asArray) {
-    return document.location.search.substring(1).split('&').reduce(function(p, c) {
-        var parts = c.split('=', 2).map(function(param) {
-            return decodeURIComponent(param);
-        });
-        if (parts.length == 0 || parts[0] != param) return (p instanceof Array) && !asArray ? null : p;
-        return asArray ? p.concat(parts.concat(true)[1]) : parts.concat(true)[1];
-    }, []);
-}
-
-var a = document.createElement("a");
-var ulist = document.getElementById("menuList");
-var newItem = document.createElement("li");
-
-a.textContent = "Refresh Data";
-a.setAttribute('href', "database.html?id=" + getURIParameter("id"));
-a.setAttribute('class', "inactive");
-newItem.appendChild(a);
-ulist.appendChild(newItem);
+startSearch();
 
 function startSearch() {
     // body...
-    var teamNumber = getURIParameter("id");
+    Parse.initialize("eEggg5yDSk41YwuUeFNjrUlSrAMhgqxZQplfbiWg", "1OROWxnr3kGNjCDD3EKsfM87Hc0L5yI9kK2axP7M");
+    var teamNumber = get;
     var teamClass = Parse.Object.extend("sdb" + teamNumber);
     var query = new Parse.Query(teamClass);
     query.ascending("number");
@@ -86,6 +148,8 @@ function startSearch() {
                 alert("Hmm... We could not find your team in our database. Please download the App to begin.");
             } else {
                 // Do something with the returned Parse.Object values
+                $('.start').hide()
+                $(".table").show();
                 for (var i = 0; i < results.length; i++) {
                     var object = results[i];
                     var name = object.get("name");
@@ -104,9 +168,6 @@ function startSearch() {
                     var notes = object.get("notes");
 
                     addRow(name, number, frcID, canScale, chevalDeFrise, drawbridge, moat, portcullis, ramparts, rockWall, roughTerrain, sallyPort, shooter, notes);
-
-                    $('.loadingView').hide()
-                    $(".table").show();
                 }
             }
         },
@@ -179,8 +240,6 @@ function addRow(name, number, frcID, canScale, chevalDeFrise, drawbridge, moat, 
     row.appendChild(cell14);
     tabBody.appendChild(row);
 }
-
-startSearch();
 </script>
 
 </html>
