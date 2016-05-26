@@ -18,26 +18,18 @@
     </div>
     <div class="table" style="display:none; width:100%">
         <ul class="menu" id="menuList">
-                <li><a class="active" href="index.html">Back</a></li>
-                <!-- <li><a class="inactive" href="doewifj" id="refreshButton">Refresh Data</a></li> -->
-            </ul>
+            <li><a class="active" href="index.html">Back</a></li>
+            <!-- <li><a class="inactive" href="doewifj" id="refreshButton">Refresh Data</a></li> -->
+        </ul>
         <table id="t01" style="margin-top:44px">
             <center>
                 <tbody>
                     <tr>
                         <th>Name</th>
                         <th>#</th>
-                        <th>FRCID</th>
                         <th>Can Scale</th>
-                        <th>Cheval De Frise</th>
-                        <th>Drawbridge</th>
-                        <th>Moat</th>
-                        <th>Portcullis</th>
-                        <th>Ramparts</th>
-                        <th>Rock Wall</th>
-                        <th>Rough Terrain</th>
-                        <th>Sally Port</th>
                         <th>Shooter</th>
+                        <th>Can Cross</th>
                         <th>Notes</th>
                     </tr>
                     <tr>
@@ -63,15 +55,17 @@ function getURIParameter(param, asArray) {
     }, []);
 }
 
-var a = document.createElement("a");
-var ulist = document.getElementById("menuList");
-var newItem = document.createElement("li");
+function addMenuButton () {
+    var a = document.createElement("a");
+    var ulist = document.getElementById("menuList");
+    var newItem = document.createElement("li");
 
-a.textContent = "Refresh Data";
-a.setAttribute('href', "database.html?id=" + getURIParameter("id"));
-a.setAttribute('class', "inactive");
-newItem.appendChild(a);
-ulist.appendChild(newItem);
+    a.textContent = "Refresh Data";
+    a.setAttribute('href', "database.html?id=" + getURIParameter("id"));
+    a.setAttribute('class', "inactive");
+    newItem.appendChild(a);
+    ulist.appendChild(newItem);
+}
 
 function startSearch() {
     // body...
@@ -83,6 +77,7 @@ function startSearch() {
         success: function(results) {
             if (results.length == 0) {
                 console.log("Did not find a class");
+                window.open("index.html", "_self");
                 alert("Hmm... We could not find your team in our database. Please download the App to begin.");
             } else {
                 // Do something with the returned Parse.Object values
@@ -103,7 +98,42 @@ function startSearch() {
                     var shooter = object.get("shooterGoal");
                     var notes = object.get("notes");
 
-                    addRow(name, number, frcID, canScale, chevalDeFrise, drawbridge, moat, portcullis, ramparts, rockWall, roughTerrain, sallyPort, shooter, notes);
+                    var canCross = "";
+
+                    if (chevalDeFrise) {
+                        canCross += "Cheval De Frise, ";
+                    }
+
+                    if (drawbridge) {
+                        canCross += "drawbridge, ";
+                    }
+
+                    if (moat) {
+                        canCross += "moat, ";
+                    }
+
+                    if (portcullis) {
+                        canCross += "portcullis, ";
+                    }
+
+                    if (ramparts) {
+                        canCross += "ramparts, ";
+                    }
+
+                    if (rockWall) {
+                        canCross += "rock wall, ";
+                    }
+
+                    if (roughTerrain) {
+                        canCross += "rough terrain, ";
+                    }
+
+                    if (sallyPort) {
+                        canCross += "sally port, ";
+                    }
+
+                    canCross = canCross.substring(0, canCross.length - 2);
+                    addRow(name, number, canScale, shooter, canCross, notes);
 
                     $('.loadingView').hide()
                     $(".table").show();
@@ -116,7 +146,7 @@ function startSearch() {
     });
 }
 
-function addRow(name, number, frcID, canScale, chevalDeFrise, drawbridge, moat, portcullis, ramparts, rockWall, roughTerrain, sallyPort, shooter, notes) {
+function addRow(name, number, canScale, canCross, shooter, notes) {
     if (!document.getElementsByTagName) return;
     tabBody = document.getElementsByTagName("tbody").item(0);
 
@@ -127,60 +157,29 @@ function addRow(name, number, frcID, canScale, chevalDeFrise, drawbridge, moat, 
     cell4 = document.createElement("td");
     cell5 = document.createElement("td");
     cell6 = document.createElement("td");
-    cell7 = document.createElement("td");
-    cell8 = document.createElement("td");
-    cell9 = document.createElement("td");
-    cell10 = document.createElement("td");
-    cell11 = document.createElement("td");
-    cell12 = document.createElement("td");
-    cell13 = document.createElement("td");
-    cell14 = document.createElement("td");
     textnode1 = document.createTextNode(name);
     textnode2 = document.createTextNode(number);
-    textnode3 = document.createTextNode(frcID);
-    textnode4 = document.createTextNode(canScale);
-    textnode5 = document.createTextNode(chevalDeFrise);
-    textnode6 = document.createTextNode(drawbridge);
-    textnode7 = document.createTextNode(moat);
-    textnode8 = document.createTextNode(portcullis);
-    textnode9 = document.createTextNode(ramparts);
-    textnode10 = document.createTextNode(rockWall);
-    textnode11 = document.createTextNode(roughTerrain);
-    textnode12 = document.createTextNode(sallyPort);
-    textnode13 = document.createTextNode(shooter);
-    textnode14 = document.createTextNode(notes);
+    textnode3 = document.createTextNode(canScale);
+    textnode4 = document.createTextNode(canCross);
+    textnode5 = document.createTextNode(shooter);
+    textnode6 = document.createTextNode(notes);
     cell1.appendChild(textnode1);
     cell2.appendChild(textnode2);
     cell3.appendChild(textnode3);
     cell4.appendChild(textnode4);
     cell5.appendChild(textnode5);
     cell6.appendChild(textnode6);
-    cell7.appendChild(textnode7);
-    cell8.appendChild(textnode8);
-    cell9.appendChild(textnode9);
-    cell10.appendChild(textnode10);
-    cell11.appendChild(textnode11);
-    cell12.appendChild(textnode12);
-    cell13.appendChild(textnode13);
-    cell14.appendChild(textnode14);
     row.appendChild(cell1);
     row.appendChild(cell2);
     row.appendChild(cell3);
     row.appendChild(cell4);
     row.appendChild(cell5);
     row.appendChild(cell6);
-    row.appendChild(cell7);
-    row.appendChild(cell8);
-    row.appendChild(cell9);
-    row.appendChild(cell10);
-    row.appendChild(cell11);
-    row.appendChild(cell12);
-    row.appendChild(cell13);
-    row.appendChild(cell14);
     tabBody.appendChild(row);
 }
 
 startSearch();
+addMenuButton();
 </script>
 
 </html>
